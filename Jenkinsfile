@@ -161,10 +161,19 @@ pipeline {
             }
         }
         stage ('Deploy to Prod') {
+            
             when {
-                expression {
-                    params.deployToProd == 'yes'
+                allOf {
+                    anyOf{
+                        expression {
+                            params.deployToProd == 'yes'
+                        }
+                    }
+                    anyOf{
+                        tag pattern: "v\\d{1,2}\\.\\d{1,2}\\.\\d{1,2}",  comparator: "REGEXP" //v1.2.3
+                    }
                 }
+
             }
             steps {
                 script {
